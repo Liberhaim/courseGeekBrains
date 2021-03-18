@@ -180,5 +180,4 @@ CREATE TABLE black_list (
   CONSTRAINT fk_black_list_rating FOREIGN KEY (calculation_rating_for_user_id) REFERENCES rating (calculation_rating_for_user_id_last_week), 
   CONSTRAINT fk_black_list_users FOREIGN KEY (user_id) REFERENCES users (id)
 );
-
 */
