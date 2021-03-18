@@ -7,6 +7,7 @@
 - выйти из sql;
 - набрать команду для указания для какой БД создаем дамп, где вводим название БД и перенаправляем в файл "mysqldump example > example.sql";
 - создать новую БД с именем sample;
+CREATE DATABASE sample;
 - выходим из mysql;
 - разворачиваем образ в новую БД sample "mysql sample < example.sql"
 
