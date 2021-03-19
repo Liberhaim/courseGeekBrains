@@ -139,45 +139,28 @@ CREATE TABLE media (
 );
 
 
-CREATE TABLE bonus_types (
-  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  name_bonus varchar(45) NOT NULL -- ('финансовый', 'социальный', 'культурный', 'наказание')
---  bonus_types_name ENUM('финансовый', 'социальный', 'культурный', 'наказание') NOT NULL,
-)ENGINE=InnoDB;
-
-/*
- * ИДЕАЛЛОГИЯ. Рейтинг нужен чтобы вытенуть его из - зависимости социльныйх сетей (которые тормозят развитие человека), стимулировать к развитию, понять его социальную значимость в обществе,
- * поощьрять правильные поступки в назидание его "неудачных сверсников". АЛЯ одна серия из сериал Черное зеркало, но не совсем то =)  
- */
-  /*
-   * Расчитывается из time_of_visit_per_week_of_the_user_in_the_community and category_id
-   * проведенного времени в сообществе за неделю, учитывая, category_id, где наивысший рейтинг дается за правильный контент c учетом рейтинг за прошлую неделю! 
-   * при положительном рейтинге получает некий бонус "который все хотят"
-   */ 
-CREATE TABLE rating (
-  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, -- 1
-  user_id BIGINT UNSIGNED NOT NULL,
-  bonus_types_id INT UNSIGNED NOT NULL, -- не связывает с bonus_types 
-  category_id ENUM('развлекательный', 'политический', 'обучающий', 'познавательный') NOT NULL, -- CHAR(1) / тематика сообщества
-  total_time_week_for_user_id_current_week DATETIME NOT NULL, -- проведенное время в соообществе за неделю 24ч * 7 дней / на общее время
-  calculation_rating_for_user_id_last_week INT UNSIGNED NOT NULL, -- рейтинг за прошлые 7 дней
-  INDEX fk_rating_bonus_types_idx (bonus_types_id),
-  INDEX fk_rating_users_idx (user_id),
-  -- CONSTRAINT fk_rating_bonus_types FOREIGN KEY (bonus_types_id) REFERENCES bonus_types (id), -- из за того что не связывает, закоментировал строчку тк. эта строка не давала создать таблицу
-  CONSTRAINT fk_rating_users FOREIGN KEY (user_id) REFERENCES users (id)
-);
-
-SELECT * FROM bonus_types;
-
-/*
 CREATE TABLE black_list (
-  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, -- 1
+  black_id BIGINT UNSIGNED NOT NULL,
   user_id BIGINT UNSIGNED NOT NULL,
-  list_user_id BIGINT UNSIGNED NOT NULL,                -- список людей игнор
-  calculation_rating_for_user_id INT UNSIGNED NOT NULL,	-- подсчитаный рейтинг юзера из таблицы рейтинг //-- низкий рейтинг исползуется в качстве защиты как антиспам.
-  INDEX list_user_id_idx (list_user_id), 
-  CONSTRAINT fk_messages_users_1 FOREIGN KEY (list_user_id) REFERENCES users (id),
-  CONSTRAINT fk_black_list_rating FOREIGN KEY (calculation_rating_for_user_id) REFERENCES rating (calculation_rating_for_user_id_last_week), 
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+  PRIMARY KEY (black_id, user_id),
+  INDEX list_id_idx (black_id),
+  INDEX list_user_id_idx (user_id), 
+  CONSTRAINT fk_black_list_users_1 FOREIGN KEY (black_id) REFERENCES users (id),
   CONSTRAINT fk_black_list_users FOREIGN KEY (user_id) REFERENCES users (id)
 );
-*/
+
+CREATE TABLE post_user (
+  post_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, -- номер поста
+  post_users_id BIGINT UNSIGNED NOT NULL, -- пост автора
+  post_media_types_id INT UNSIGNED NOT NULL, 
+  txt TEXT NOT NULL, -- текст сообщения
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  file_name VARCHAR(245) DEFAULT NULL COMMENT '/files/folder/img.png',
+  file_size BIGINT DEFAULT NULL,
+  INDEX fk_post_user_media_idx (post_media_types_id), -- уникальный тип поста: фото или видео 
+  CONSTRAINT fk_post_user_users FOREIGN KEY (post_users_id) REFERENCES users (id),
+  CONSTRAINT fk_post_user_media_types FOREIGN KEY (post_media_types_id) REFERENCES media_types (id)
+);
+
