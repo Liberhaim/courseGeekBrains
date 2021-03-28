@@ -14,4 +14,4 @@ SELECT  (SELECT	from_user_id FROM messages WHERE to_user_id = users.id AND from_
   	GROUP BY from_user_id
   	ORDER BY COUNT(from_user_id) DESC LIMIT 1) AS best_friend_id
 
-FROM users WHERE id = 10; -- 10 > общался c 4
+FROM users WHERE id = 10;
