@@ -8,8 +8,9 @@ SELECT
 	name,
 	birthday_at,
 	concat(YEAR(now()), '-', substring(birthday_at, 6, 10)) AS data_birthday_at_in_year,
-	dayname(concat(YEAR(now()), '-', substring(birthday_at, 6, 10))) AS week_day_birthday_at_year
+	dayname(concat(YEAR(now()), '-', substring(birthday_at, 6, 10))) AS week_day_birthday_at_year,
+	count(*)
 FROM
 	users
-ORDER BY
+GROUP BY
 	week_day_birthday_at_year;
